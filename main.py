@@ -1,6 +1,6 @@
 import argparse, sys
-import datefinder
 import os
+from datetime import datetime
 
 
 parser = argparse.ArgumentParser()
@@ -17,8 +17,19 @@ calendarsDirectory = args.calendars
 busyTime = dict()
 
 for calendar in os.listdir(calendarsDirectory):
-    f = open(calendar, 'r')
-    content = f.read()
+    f = open(f"{calendarsDirectory}/{calendar}", 'r')
+    name=os.path.basename(f"{calendarsDirectory}/{calendar}").split('.')[0]
+    content = f.readlines()
     for lines in content:
-        busyTime[calendar].append(list(datefinder.find_dates(lines)))
+        splitted=lines.partition(' - ')
+        if(splitted[2]==''):
+            date= datetime.strptime(splitted[0], '%Y-%m-%d')
+            busyTime[name]=((date,datetime.strptime(splitted[0]+ '23:59:59', '%Y-%m-%d %H:%M:%S')))
+
+        else:
+            date1= datetime.strptime(splitted[0], '%Y-%m-%d %H:%M:%S')
+            date2= datetime.strptime(splitted[2], '%Y-%m-%d %H:%M:%S')
+            busyTime[name]=((date1,date2))
     f.close()
+
+print(busyTime)
