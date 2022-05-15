@@ -15,7 +15,11 @@ def main():
     minimumPeople = args.minimum_people
     calendarsDirectory = args.calendars
 
+    busyTime = dict()
+
     for calendar in os.listdir(calendarsDirectory):
         f = open(calendar, 'r')
         content = f.read()
-        dates = list(datefinder.find_dates(content))
+        for lines in content:
+            busyTime[calendar].append(list(datefinder.find_dates(lines)))
+        f.close()
